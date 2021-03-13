@@ -177,7 +177,7 @@ if __name__ == '__main__':
                         required=True,
                         type=str,
                         help='"prepend" (before) or "append" (after). '
-                             'Mandatory')
+                             'Mandatory.')
     parser.add_argument('-s', '--sequence', metavar='ATCGATCGATCGATCG',
                         required=True,
                         type=str,

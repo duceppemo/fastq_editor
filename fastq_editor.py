@@ -160,7 +160,7 @@ class FastqEditor(object):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description='Prepend or append every entry of a fastq file wiht a specific sequence.'
+    parser = ArgumentParser(description='Prepend or append every entry of a fastq file with a specific sequence.'
                                         ' Only works with Phred 33 fastq files.')
     parser.add_argument('-i', '--input', metavar='/input_folder/',
                         required=True,

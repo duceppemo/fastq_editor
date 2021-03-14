@@ -117,21 +117,17 @@ class FastqEditor(object):
     @staticmethod
     def write_modified_fastq(master_dict, seq_to_add, mode, outfolder):
         """
-
+        Write modified fastq file with added bases to new gzipped fastq file
         :param master_dict: dictionary. Contains files and reads info
         :param seq_to_add: string. Sequence to add
         :param mode: string. Prepend or append
         :param outfolder: string. Path of output folder
         :return:
         """
+        # Generate corresponding quality (F = Phred 40)
+        qual_to_add = 'F' * len(seq_to_add)
+
         for f, fastq_dict in master_dict.items():
-            # Get file and reads info back
-            (h, seq_info) = fastq_dict.items()
-            header = h[0]
-            seq = seq_info[1][0]
-            qual = seq_info[1][1]
-            # Generate corresponding quality (F = Phred 40)
-            qual_to_add = 'F' * len(seq_to_add)
             # Create file path of output file
             outfile = outfolder + '/' + os.path.basename(f)
             # Since all output files are gzipped, make sure to add ".gz" extensions to the input files
@@ -139,14 +135,19 @@ class FastqEditor(object):
             if not outfile.endswith('.gz'):
                 outfile += '.gz'
 
-            # Add sequence to fastq entry and write to gzipped output file
             with gzip.open(outfile, 'wb') as out_f:
-                if mode == 'prepend':
-                    # Convert to binary for gzipped
-                    out_f.write('{}\n{}{}\n{}\n{}{}\n'.format(header, seq_to_add, seq, '+', qual_to_add, qual).encode())
-                else:  # if mode == 'append':
-                    # Convert to binary for gzipped
-                    out_f.write('{}\n{}{}\n{}\n{}{}\n'.format(header, seq, seq_to_add, '+', qual, qual_to_add).encode())
+                # Get file and reads info back
+                for read_id, info_list in fastq_dict.items():
+                    header = read_id
+                    seq = info_list[0]
+                    qual = info_list[1]
+                    # Add sequence to fastq entry and write to gzipped output file
+                    if mode == 'prepend':
+                        # Convert to binary for gzipped
+                        out_f.write('{}\n{}{}\n{}\n{}{}\n'.format(header, seq_to_add, seq, '+', qual_to_add, qual).encode())
+                    else:  # if mode == 'append':
+                        # Convert to binary for gzipped
+                        out_f.write('{}\n{}{}\n{}\n{}{}\n'.format(header, seq, seq_to_add, '+', qual, qual_to_add).encode())
 
     @staticmethod
     def make_folder(folder):
